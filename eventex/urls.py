@@ -4,9 +4,9 @@ from django.conf.urls import patterns, include, url
 #from django.contrib import admin
 # admin.autodiscover()
 
+
 urlpatterns = patterns('eventex.core.views',
     url(r'^$', 'homepage', name='homepage'),
-    url(r'^static/(?P<path>.*)$', 'django.contrib.staticfiles.views.serve')
     # Examples:
     # url(r'^$', 'eventex.views.home', name='home'),
     # url(r'^eventex/', include('eventex.foo.urls')),
@@ -17,3 +17,9 @@ urlpatterns = patterns('eventex.core.views',
     # Uncomment the next line to enable the admin:
     #url(r'^admin/', include(admin.site.urls)),
 )
+
+from django.conf import settings
+urlpatterns += patterns('django.views.static',
+    url(r'^static/(?P<path>.*)$', 'serve', {'document_root': settings.STATIC_ROOT}),
+)
+
