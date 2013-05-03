@@ -1,6 +1,6 @@
 # Django settings for eventex project.
 
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 
@@ -19,11 +19,27 @@ import os
 DEBUG = os.environ.get('DEBUG') == 'True'
 TEMPLATE_DEBUG = DEBUG
 
+'''
 import dj_database_url
 DATABASES = {
     
     'default': dj_database_url.config(default='sqlite:///' +  PROJECT_DIR.child('database.db'))
 }
+'''
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': 'database.db', #PROJECT_DIR.child('database.db'),                      # Or path to database file if using sqlite3.
+        # The following settings are not used with sqlite3:
+        'USER': '',
+        'PASSWORD': '',
+        'HOST': '',                      # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
+        'PORT': '',                      # Set to empty string for default.
+     }
+}
+
+
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
@@ -124,11 +140,12 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'eventex.core',
     # Uncomment the next line to enable the admin:
-    'django.contrib.admin',
+    # 'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
+    'eventex.core',
+    'eventex.subscriptions',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -142,6 +159,9 @@ LOGGING = {
     'filters': {
         'require_debug_false': {
             '()': 'django.utils.log.RequireDebugFalse'
+        },
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
         }
     },
     'handlers': {
@@ -150,7 +170,11 @@ LOGGING = {
             'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler'
         },
-        'console':{'level': 'DEBUG', 'class': 'logging.StreamHandler', },
+        'console':{
+            'level': 'DEBUG',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+        },
     },
     'loggers': {
         'django.request': {
